@@ -21,15 +21,32 @@ app.use('/api/weather', weatherRoutes);
 app.use('/api/summary', summaryRoutes);
 
 // Fetch weather data immediately when the server starts
-fetchWeatherData().catch(error => console.error('Initial weather data fetch failed:', error));
+console.log('Initiating initial weather data fetch...');
+fetchWeatherData()
+  .then(() => console.log('Initial weather data fetch completed successfully'))
+  .catch(error => console.error('Initial weather data fetch failed:', error));
 
+// Schedule weather data fetching every 5 minutes
 cron.schedule('*/5 * * * *', async () => {
-  console.log('Fetching weather data...');
+  console.log('Scheduled task: Fetching weather data...');
   try {
     await fetchWeatherData();
-    console.log('Weather data fetched and processed successfully');
+    console.log('Scheduled weather data fetch completed successfully');
   } catch (error) {
-    console.error('Error fetching weather data:', error);
+    console.error('Error in scheduled weather data fetch:', error);
+  }
+});
+
+// Endpoint to manually trigger data refresh
+app.get('/api/refresh', async (req, res) => {
+  console.log('Manual refresh requested');
+  try {
+    const updatedData = await fetchWeatherData();
+    console.log('Manual refresh completed successfully');
+    res.json(updatedData);
+  } catch (error) {
+    console.error('Error in manual refresh:', error);
+    res.status(500).json({ message: 'Error refreshing data', error: error.message });
   }
 });
 

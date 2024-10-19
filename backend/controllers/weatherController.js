@@ -2,7 +2,16 @@ const WeatherData = require('../models/WeatherData');
 
 exports.getWeather = async (req, res) => {
   try {
-    const weather = await WeatherData.find().sort({ dt: -1 }).limit(6);  // Get latest data for 6 cities
+    const weather = await WeatherData.aggregate([
+      { $sort: { dt: -1 } },
+      { $group: { 
+        _id: "$city",
+        doc: { $first: "$$ROOT" }
+      }},
+      { $replaceRoot: { newRoot: "$doc" } },
+      { $sort: { city: 1 } }
+    ]);
+    
     console.log('Sending weather data:', weather);
     res.json(weather);
   } catch (err) {

@@ -6,8 +6,9 @@ const cities = ['Delhi', 'Mumbai', 'Chennai', 'Bangalore', 'Kolkata', 'Hyderabad
 
 async function fetchWeatherData() {
   const apiKey = process.env.API_KEY;
+  console.log('Starting to fetch weather data for all cities');
 
-  for (const city of cities) {
+  const fetchPromises = cities.map(async (city) => {
     try {
       console.log(`Fetching data for ${city}`);
       const response = await axios.get(`http://api.openweathermap.org/data/2.5/weather?q=${city},IN&appid=${apiKey}`);
@@ -16,19 +17,26 @@ async function fetchWeatherData() {
       const weather = new WeatherData({
         city: data.name,
         main: data.weather[0].main,
-        temp: data.main.temp - 273.15, // Convert to Celsius
-        feels_like: data.main.feels_like - 273.15,
-        dt: new Date(data.dt * 1000)
+        temp: (data.main.temp - 273.15).toFixed(1), // Convert to Celsius and round to 1 decimal
+        feels_like: (data.main.feels_like - 273.15).toFixed(1),
+        dt: new Date()
       });
 
       await weather.save();
       console.log(`Saved weather data for ${city}`);
 
       await updateDailySummary(city, weather);
+      return weather;
     } catch (error) {
       console.error(`Error fetching data for ${city}:`, error);
+      return null;
     }
-  }
+  });
+
+  const results = await Promise.all(fetchPromises);
+  const validResults = results.filter(result => result !== null);
+  console.log(`Completed fetching weather data. Successful fetches: ${validResults.length}/${cities.length}`);
+  return validResults;
 }
 
 async function updateDailySummary(city, weather) {
@@ -50,11 +58,11 @@ async function updateDailySummary(city, weather) {
         dominantCondition: weather.main
       });
     } else {
-      summary.tempSum += weather.temp;
+      summary.tempSum += parseFloat(weather.temp);
       summary.tempCount += 1;
-      summary.avgTemp = summary.tempSum / summary.tempCount;
-      summary.tempMax = Math.max(summary.tempMax, weather.temp);
-      summary.tempMin = Math.min(summary.tempMin, weather.temp);
+      summary.avgTemp = (summary.tempSum / summary.tempCount).toFixed(1);
+      summary.tempMax = Math.max(summary.tempMax, weather.temp).toFixed(1);
+      summary.tempMin = Math.min(summary.tempMin, weather.temp).toFixed(1);
       summary.conditions.push(weather.main);
 
       const conditionCounts = summary.conditions.reduce((acc, condition) => {
