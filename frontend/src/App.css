@@ -230,3 +230,77 @@ body {
   background: #f8f9fa;
   border-radius: 8px;
 }
+
+/* Add these transition and animation properties to your existing elements */
+
+/* Card hover animation */
+.card {
+  /* Keep existing styles */
+  transition: transform 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Nav link hover animation */
+.nav a {
+  /* Keep existing styles */
+  transition: all 0.3s ease;
+}
+
+.nav a:hover {
+  transform: translateY(-2px);
+}
+
+/* Button hover animation */
+.button {
+  /* Keep existing styles */
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+/* Alert item hover animation */
+.alert-item {
+  /* Keep existing styles */
+  transition: transform 0.3s ease;
+}
+
+.alert-item:hover {
+  transform: translateX(5px);
+}
+
+/* Input focus animation */
+.input {
+  /* Keep existing styles */
+  transition: all 0.3s ease;
+}
+
+.input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
+  border-color: #007bff;
+}
+
+/* Header gradient (optional) */
+.header {
+  background: linear-gradient(145deg, #007bff, #0056b3);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Button gradient (optional) */
+.button {
+  background: linear-gradient(145deg, #28a745, #218838);
+}
+
+.button:hover {
+  background: linear-gradient(145deg, #218838, #28a745);
+}
