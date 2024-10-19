@@ -5,7 +5,9 @@ const cors = require('cors');
 const cron = require('node-cron');
 const weatherRoutes = require('./routes/weatherRoutes');
 const summaryRoutes = require('./routes/summaryRoutes');
+const alertRoutes = require('./routes/alertRoutes');
 const { fetchWeatherData } = require('./utils/weatherApi');
+const { checkAlerts } = require('./utils/alertChecker');
 const connectDB = require('./config/database');
 
 dotenv.config();
@@ -19,34 +21,28 @@ connectDB();
 
 app.use('/api/weather', weatherRoutes);
 app.use('/api/summary', summaryRoutes);
+app.use('/api/alerts', alertRoutes);
 
-// Fetch weather data immediately when the server starts
-console.log('Initiating initial weather data fetch...');
+// Fetch weather data and check for alerts immediately when the server starts
+console.log('Initiating initial weather data fetch and alert check...');
 fetchWeatherData()
-  .then(() => console.log('Initial weather data fetch completed successfully'))
-  .catch(error => console.error('Initial weather data fetch failed:', error));
+  .then(async (weatherData) => {
+    console.log('Initial weather data fetch completed successfully');
+    await checkAlerts(weatherData);
+    console.log('Initial alert check completed');
+  })
+  .catch(error => console.error('Initial weather data fetch or alert check failed:', error));
 
-// Schedule weather data fetching every 5 minutes
+// Schedule weather data fetching and alert checking every 5 minutes
 cron.schedule('*/5 * * * *', async () => {
-  console.log('Scheduled task: Fetching weather data...');
+  console.log('Scheduled task: Fetching weather data and checking alerts...');
   try {
-    await fetchWeatherData();
+    const weatherData = await fetchWeatherData();
     console.log('Scheduled weather data fetch completed successfully');
+    await checkAlerts(weatherData);
+    console.log('Scheduled alert check completed');
   } catch (error) {
-    console.error('Error in scheduled weather data fetch:', error);
-  }
-});
-
-// Endpoint to manually trigger data refresh
-app.get('/api/refresh', async (req, res) => {
-  console.log('Manual refresh requested');
-  try {
-    const updatedData = await fetchWeatherData();
-    console.log('Manual refresh completed successfully');
-    res.json(updatedData);
-  } catch (error) {
-    console.error('Error in manual refresh:', error);
-    res.status(500).json({ message: 'Error refreshing data', error: error.message });
+    console.error('Error in scheduled weather data fetch or alert check:', error);
   }
 });
 
