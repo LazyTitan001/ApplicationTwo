@@ -2,7 +2,7 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import Weather from "./pages/Weather";
 import Summary from "./pages/Summary";
-import Alerts from "./pages/Alerts";
+import AlertDisplay from "./pages/AlertDisplay";
 import AlertSettings from "./pages/AlertSettings";
 import './App.css';
 
@@ -16,13 +16,13 @@ function App() {
         <nav className="nav">
           <Link to="/weather">Weather</Link>
           <Link to="/summary">Summary</Link>
-          <Link to="/alerts">Alerts</Link>
+          <Link to="/AlertDisplay">Alerts</Link>
           <Link to="/alert-settings">Alert Settings</Link>
         </nav>
         <Routes>
           <Route path="/weather" element={<Weather />} />
           <Route path="/summary" element={<Summary />} />
-          <Route path="/alerts" element={<Alerts />} />
+          <Route path="/AlertDisplay" element={<AlertDisplay />} />
           <Route path="/alert-settings" element={<AlertSettings />} />
           <Route path="/" element={<Weather />} />
         </Routes>
