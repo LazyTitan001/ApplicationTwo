@@ -16,14 +16,13 @@ async function fetchWeatherData() {
       );
       const data = response.data;
 
-      // Fix: Properly access temperature data from API response
       const weatherData = {
         city: data.name,
         main: data.weather[0].main,
-        temp: (data.main.temp - 273.15).toFixed(1), // Convert to Celsius
-        min_temp: (data.main.temp_min - 273.15).toFixed(1), // Fix: Correct property name
-        max_temp: (data.main.temp_max - 273.15).toFixed(1), // Fix: Correct property name
+        temp: (data.main.temp - 273.15).toFixed(1),
         feels_like: (data.main.feels_like - 273.15).toFixed(1),
+        humidity: data.main.humidity,
+        wind_speed: data.wind.speed,
         dt: new Date()
       };
 
@@ -52,35 +51,31 @@ async function updateDailySummary(city, weather) {
     let summary = await DailySummary.findOne({ city, date: today });
 
     if (!summary) {
-      // Create new summary
       summary = new DailySummary({
         city,
         date: today,
         tempSum: parseFloat(weather.temp),
         tempCount: 1,
         avgTemp: weather.temp,
-        tempMax: weather.max_temp, // Fix: Use correct property name
-        tempMin: weather.min_temp, // Fix: Use correct property name
+        tempMax: weather.temp,
+        tempMin: weather.temp,
         conditions: [weather.main],
-        dominantCondition: weather.main
+        dominantCondition: weather.main,
+        humiditySum: weather.humidity,
+        windSpeedSum: weather.wind_speed
       });
     } else {
-      // Update existing summary
       summary.tempSum += parseFloat(weather.temp);
       summary.tempCount += 1;
       summary.avgTemp = (summary.tempSum / summary.tempCount).toFixed(1);
       
-      // Fix: Parse temperatures as floats for comparison
-      const currentMax = parseFloat(summary.tempMax);
-      const currentMin = parseFloat(summary.tempMin);
-      const newTemp = parseFloat(weather.temp);
-      
-      summary.tempMax = Math.max(currentMax, newTemp).toFixed(1);
-      summary.tempMin = Math.min(currentMin, newTemp).toFixed(1);
+      summary.tempMax = Math.max(parseFloat(summary.tempMax), parseFloat(weather.temp)).toFixed(1);
+      summary.tempMin = Math.min(parseFloat(summary.tempMin), parseFloat(weather.temp)).toFixed(1);
       
       summary.conditions.push(weather.main);
+      summary.humiditySum += weather.humidity;
+      summary.windSpeedSum += weather.wind_speed;
 
-      // Calculate dominant condition
       const conditionCounts = summary.conditions.reduce((acc, condition) => {
         acc[condition] = (acc[condition] || 0) + 1;
         return acc;

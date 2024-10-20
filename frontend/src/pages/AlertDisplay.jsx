@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { format } from 'date-fns';
 
 const AlertDisplay = () => {
   const [alerts, setAlerts] = useState([]);
@@ -28,6 +29,17 @@ const AlertDisplay = () => {
     return () => clearInterval(interval);
   }, []);
 
+  const getAlertIcon = (severity) => {
+    switch (severity) {
+      case 'high':
+        return '🚨';
+      case 'medium':
+        return '⚠️';
+      default:
+        return 'ℹ️';
+    }
+  };
+
   const getAlertClass = (severity) => {
     switch (severity) {
       case 'high':
@@ -39,32 +51,37 @@ const AlertDisplay = () => {
     }
   };
 
-  const formatDate = (date) => {
-    return new Date(date).toLocaleString();
-  };
+  if (loading) {
+    return <div className="alert-container">
+      <div className="loading">Loading alerts...</div>
+    </div>;
+  }
 
-  if (loading) return <div className="loading">Loading alerts...</div>;
-  if (error) return <div className="error">{error}</div>;
+  if (error) {
+    return <div className="alert-container">
+      <div className="error">{error}</div>
+    </div>;
+  }
 
   return (
-    <div className="alert-display">
-      <div className="alert-header">
-        <h1>Weather Alerts</h1>
-      </div>
-
-      <div className="alerts-container">
+    <div className="alert-container">
+      <h2>Weather Alerts</h2>
+      <div className="alert-grid">
         {alerts.length === 0 ? (
           <div className="no-alerts">No alerts to display</div>
         ) : (
           alerts.map((alert) => (
-            <div 
-              key={alert._id} 
-              className={`alert-item ${getAlertClass(alert.severity)}`}
+            <div
+              key={alert._id}
+              className={`alert-card ${getAlertClass(alert.severity)}`}
             >
-              <div className="alert-city">{alert.city}</div>
-              <div className="alert-message">{alert.message}</div>
-              <div className="alert-timestamp">
-                {formatDate(alert.timestamp)}
+              <div className="alert-icon">{getAlertIcon(alert.severity)}</div>
+              <div className="alert-content">
+                <h3 className="alert-city">{alert.city}</h3>
+                <p className="alert-message">{alert.message}</p>
+                <p className="alert-timestamp">
+                  {format(new Date(alert.timestamp), 'MMMM d, yyyy HH:mm')}
+                </p>
               </div>
             </div>
           ))

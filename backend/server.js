@@ -6,8 +6,10 @@ const cron = require('node-cron');
 const weatherRoutes = require('./routes/weatherRoutes');
 const summaryRoutes = require('./routes/summaryRoutes');
 const alertRoutes = require('./routes/alertRoutes');
-const thresholdRoutes = require('./routes/thresholdRoutes'); // Add this
+const thresholdRoutes = require('./routes/thresholdRoutes');
+const forecastRoutes = require('./routes/forecastRoutes');
 const { fetchWeatherData } = require('./utils/weatherApi');
+const { fetchAndStoreForecast } = require('./utils/forecastApi');
 const { checkAlerts } = require('./utils/alertChecker');
 const connectDB = require('./config/database');
 
@@ -42,7 +44,6 @@ const initializeThresholds = async () => {
           weatherCondition: 'Rain',
           enabled: true
         }
-        // Add more default thresholds as needed
       ];
       
       await Threshold.insertMany(defaultThresholds);
@@ -57,21 +58,32 @@ const initializeThresholds = async () => {
 app.use('/api/weather', weatherRoutes);
 app.use('/api/summary', summaryRoutes);
 app.use('/api/alerts', alertRoutes);
-app.use('/api/thresholds', thresholdRoutes); // Add this
+app.use('/api/thresholds', thresholdRoutes);
+app.use('/api/forecast', forecastRoutes);
+
+// Test route
+app.get('/api/test', (req, res) => {
+  res.json({ message: 'API is working' });
+});
 
 // Initialize the system
 const initializeSystem = async () => {
   console.log('Initializing system...');
   
-  // Initialize default thresholds
   await initializeThresholds();
   
-  // Initial weather data fetch and alert check
   try {
-    const weatherData = await fetchWeatherData();
-    console.log('Initial weather data fetch completed');
-    await checkAlerts(weatherData);
-    console.log('Initial alert check completed');
+    const cities = ['Delhi', 'Mumbai', 'Chennai', 'Bangalore', 'Kolkata', 'Hyderabad'];
+    
+    for (const city of cities) {
+      console.log(`Initializing data for ${city}...`);
+      const weatherData = await fetchWeatherData(city);
+      await fetchAndStoreForecast(city);
+      await checkAlerts(weatherData);
+      console.log(`Initialization completed for ${city}`);
+    }
+    
+    console.log('Initial system setup completed');
   } catch (error) {
     console.error('Error in initial system setup:', error);
   }
@@ -80,29 +92,36 @@ const initializeSystem = async () => {
 // Run initialization when server starts
 initializeSystem();
 
-// Schedule regular weather checks and alert generation
-// Running every 5 minutes
+// Schedule regular weather and forecast checks
 cron.schedule('*/5 * * * *', async () => {
-  console.log('Running scheduled weather check...');
+  console.log('Running scheduled checks...');
   try {
-    const weatherData = await fetchWeatherData();
-    await checkAlerts(weatherData);
-    console.log('Scheduled check completed successfully');
+    const cities = ['Delhi', 'Mumbai', 'Chennai', 'Bangalore', 'Kolkata', 'Hyderabad'];
+    
+    for (const city of cities) {
+      console.log(`Updating data for ${city}...`);
+      const weatherData = await fetchWeatherData(city);
+      await checkAlerts(weatherData);
+      await fetchAndStoreForecast(city);
+      console.log(`Update completed for ${city}`);
+    }
+    
+    console.log('Scheduled checks completed successfully');
   } catch (error) {
-    console.error('Error in scheduled check:', error);
+    console.error('Error in scheduled checks:', error);
   }
 });
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ 
+  console.error('Error:', err);
+  res.status(500).json({
     message: 'Something went wrong!',
-    error: process.env.NODE_ENV === 'development' ? err.message : undefined 
+    error: process.env.NODE_ENV === 'development' ? err.message : 'Internal server error'
   });
 });
 
-// Handle unhandled rejections
+// Handle unhandled promise rejections
 process.on('unhandledRejection', (error) => {
   console.error('Unhandled Rejection:', error);
 });

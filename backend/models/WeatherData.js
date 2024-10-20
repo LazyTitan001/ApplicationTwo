@@ -5,6 +5,8 @@ const WeatherDataSchema = new mongoose.Schema({
   main: { type: String, required: true },
   temp: { type: Number, required: true },
   feels_like: { type: Number, required: true },
+  humidity: { type: Number, required: true },
+  wind_speed: { type: Number, required: true },
   dt: { type: Date, required: true }
 });
 

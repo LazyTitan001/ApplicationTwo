@@ -8,8 +8,10 @@ const DailySummarySchema = new mongoose.Schema({
   avgTemp: { type: Number, required: true },
   tempMax: { type: Number, required: true },
   tempMin: { type: Number, required: true },
-  conditions: { type: [String], required: true },
-  dominantCondition: { type: String, required: true }
+  conditions: [{ type: String }],
+  dominantCondition: { type: String },
+  humiditySum: { type: Number, required: true, default: 0 },
+  windSpeedSum: { type: Number, required: true, default: 0 }
 });
 
 module.exports = mongoose.model('DailySummary', DailySummarySchema);

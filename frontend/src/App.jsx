@@ -5,6 +5,7 @@ import Summary from "./pages/Summary";
 import AlertDisplay from "./pages/AlertDisplay";
 import AlertSettings from "./pages/AlertSettings";
 import './App.css';
+import Forecast from './pages/Forecast';
 
 function App() {
   return (
@@ -18,8 +19,10 @@ function App() {
           <Link to="/summary">Summary</Link>
           <Link to="/AlertDisplay">Alerts</Link>
           <Link to="/alert-settings">Alert Settings</Link>
+          <Link to="/forecast">Forecast</Link>
         </nav>
         <Routes>
+        <Route path="/forecast" element={<Forecast />} />
           <Route path="/weather" element={<Weather />} />
           <Route path="/summary" element={<Summary />} />
           <Route path="/AlertDisplay" element={<AlertDisplay />} />
