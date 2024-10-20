@@ -21,10 +21,11 @@ body {
 
 /* Header styles */
 .header {
-  background: #007bff;
+  background: linear-gradient(145deg, #007bff, #0056b3);
   color: #fff;
   padding: 10px 0;
   text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .header h1 {
@@ -43,11 +44,12 @@ body {
   color: #fff;
   padding: 10px 20px;
   text-decoration: none;
-  transition: background 0.3s;
+  transition: all 0.3s ease;
 }
 
 .nav a:hover {
   background: #004494;
+  transform: translateY(-2px);
 }
 
 /* Card styles for displaying weather data */
@@ -58,21 +60,31 @@ body {
   padding: 15px;
   margin: 10px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
 }
 
 /* Button styles */
 .button {
-  background: #28a745;
+  background: linear-gradient(145deg, #28a745, #218838);
   color: white;
   padding: 10px 15px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  transition: background 0.3s;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .button:hover {
-  background: #218838;
+  background: linear-gradient(145deg, #218838, #28a745);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
 }
 
 /* Alert message styles */
@@ -92,7 +104,7 @@ body {
   color: #721c24;
 }
 
-/* Add these styles to your existing CSS */
+/* Threshold card styles */
 .threshold-card {
   background: #fff;
   border: 1px solid #ddd;
@@ -125,6 +137,13 @@ body {
   border: 1px solid #ddd;
   border-radius: 4px;
   font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.input:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
+  border-color: #007bff;
 }
 
 .save-button {
@@ -134,14 +153,17 @@ body {
   font-size: 16px;
 }
 
+/* Add city section */
 .add-city-section {
   margin-bottom: 30px;
 }
 
+/* Thresholds section */
 .thresholds-section {
   margin-top: 20px;
 }
 
+/* Alert display */
 .alert-display {
   padding: 20px;
 }
@@ -178,6 +200,11 @@ body {
   padding: 15px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease;
+}
+
+.alert-item:hover {
+  transform: translateX(5px);
 }
 
 .alert-high {
@@ -231,137 +258,7 @@ body {
   border-radius: 8px;
 }
 
-/* Add these transition and animation properties to your existing elements */
-
-/* Card hover animation */
-.card {
-  /* Keep existing styles */
-  transition: transform 0.3s ease;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-}
-
-.card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-}
-
-/* Nav link hover animation */
-.nav a {
-  /* Keep existing styles */
-  transition: all 0.3s ease;
-}
-
-.nav a:hover {
-  transform: translateY(-2px);
-}
-
-/* Button hover animation */
-.button {
-  /* Keep existing styles */
-  transition: all 0.3s ease;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
-}
-
-/* Alert item hover animation */
-.alert-item {
-  /* Keep existing styles */
-  transition: transform 0.3s ease;
-}
-
-.alert-item:hover {
-  transform: translateX(5px);
-}
-
-/* Input focus animation */
-.input {
-  /* Keep existing styles */
-  transition: all 0.3s ease;
-}
-
-.input:focus {
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.2);
-  border-color: #007bff;
-}
-
-/* Header gradient (optional) */
-.header {
-  background: linear-gradient(145deg, #007bff, #0056b3);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-/* Button gradient (optional) */
-.button {
-  background: linear-gradient(145deg, #28a745, #218838);
-}
-
-.button:hover {
-  background: linear-gradient(145deg, #218838, #28a745);
-}
-
-.forecast-container {
-  padding: 20px;
-}
-
-.forecast-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.city-select {
-  padding: 8px;
-  border-radius: 4px;
-  border: 1px solid #ddd;
-  font-size: 16px;
-}
-
-.forecast-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
-}
-
-.forecast-card {
-  background: white;
-  border-radius: 8px;
-  padding: 15px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.forecast-summary {
-  margin: 15px 0;
-  padding: 10px;
-  background: #f8f9fa;
-  border-radius: 4px;
-}
-
-.hourly-forecast {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-  gap: 10px;
-  margin-top: 15px;
-}
-
-.hourly-item {
-  text-align: center;
-  padding: 8px;
-  background: #f8f9fa;
-  border-radius: 4px;
-  font-size: 0.9em;
-}
-
-.hourly-item p {
-  margin: 4px 0;
-}
-
+/* Forecast container */
 .forecast-container {
   padding: 20px;
   max-width: 1200px;
@@ -457,6 +354,7 @@ body {
   background: #f8f9fa;
 }
 
+/* Weather container */
 .weather-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -502,27 +400,19 @@ body {
   margin-top: 10px;
 }
 
-.loading, .error, .no-data {
-  text-align: center;
-  padding: 20px;
-}
-
-.error {
-  color: red;
-}
-
 @media (max-width: 600px) {
   .weather-details {
-    flex-direction: column;
-    align-items: flex-start;
+      flex-direction: column;
+      align-items: flex-start;
   }
 
   .weather-icon {
-    margin-right: 0;
-    margin-bottom: 10px;
+      margin-right: 0;
+      margin-bottom: 10px;
   }
 }
 
+/* Summary container */
 .summary-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -605,15 +495,7 @@ body {
   color: #666;
 }
 
-.loading, .error, .no-data {
-  text-align: center;
-  padding: 20px;
-}
-
-.error {
-  color: red;
-}
-
+/* Alert container */
 .alert-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -676,15 +558,7 @@ body {
   border-left: 5px solid #f75555;
 }
 
-.loading, .error, .no-alerts {
-  text-align: center;
-  padding: 20px;
-}
-
-.error {
-  color: red;
-}
-
+/* Alert settings container */
 .alert-settings-container {
   max-width: 1000px;
   margin: 0 auto;
